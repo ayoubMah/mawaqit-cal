@@ -4,6 +4,28 @@
 re-review of the fixes; this is not a declaration that all acceptance is complete.
 Claude's original `piece-1-claude.md` is preserved unchanged.
 
+## R1 follow-up after Claude's re-review
+
+Claude re-reviewed `5a63627`: F1/F3/F6/F7 closed, code GO after R1.
+R1 is now fixed locally for a short final look:
+
+- Preview includes today and the next two mosque-local days (15 events for Sahaba,
+  about 4 KB), preserving one more day after a missed daily build.
+- Missing-day text in FR/EN/AR, including the HTML fallback, explicitly describes
+  the preview and states that it does not change the calendar subscription.
+- The updated Go test first failed against the old serializer (10 rather than
+  15 events), then passed with three days; its range crosses the autumn DST change.
+- Go tests/vet and both JavaScript syntax checks passed. The browser suite passed
+  using the last successful snapshot on its third local day, then advancing beyond
+  the preview: the stale/preview notices appear while subscription controls and
+  the feed URL remain available. Wording was checked in all three languages.
+
+The two-day F5 implementation described below is the history at `5a63627`,
+superseded by this R1 revision. The ICS range and identities are unchanged.
+F2, R2 (publication of tracked review/planning files) and F4 remain undecided/open.
+No public push is authorized by this revision. Claude's new re-review report is
+preserved unchanged and is not included in the R1 commit's staging list.
+
 ## Findings
 
 | Finding | Revision / remaining condition |
@@ -61,7 +83,8 @@ signed-in checks are available, then switch to `cid` with the manual fallback re
 
 ## Next
 
-Claude: re-review the above changes against the original findings, particularly
-F1's Google/Apple distinction and F3's no-selection/recovery behavior. Keep F4 and
-Ayoub's F2 decision explicit. No next implementation slice or publication as part
-of this re-review.
+Claude: a short final look at R1 (three days and preview-only wording) is enough.
+Keep F4, F2 and R2 explicit. No next implementation slice or publication as part
+of this review. If review files are to remain private, the existing local history
+must be prepared accordingly before its first push; merely ignoring them afterward
+does not remove them from `5a63627`.

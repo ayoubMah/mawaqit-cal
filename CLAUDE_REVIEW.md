@@ -1,7 +1,8 @@
 # Claude review - piece 1
 
-Status: Claude reviewed piece 1 with CHANGES REQUESTED; Codex's review fixes are ready
-on local branch `feat/calendar-onboarding`, with F4's live acceptance still pending.
+Status: Claude re-reviewed `5a63627`, closed F1/F3/F6/F7, and gave code GO after R1.
+The R1 follow-up (three-day preview and preview-only missing-day text) is now ready
+on local branch `feat/calendar-onboarding`. F2/R2 decisions and F4 live acceptance remain open.
 Read `reviews/piece-1-codex-response.md` for the revision and unresolved decisions.
 Ayoub's instruction: implement piece by piece, with Claude reviewing as the team partner.
 The local branch isolates this piece from `main`. No push, merge, hosted Site

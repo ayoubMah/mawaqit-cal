@@ -35,7 +35,7 @@ func TestCatalogUsesMosqueDateAndExistingEvents(t *testing.T) {
 	}
 }
 
-func TestCatalogOnlyIncludesTodayAndTomorrow(t *testing.T) {
+func TestCatalogIncludesThreeLocalDaysAfterMissedBuild(t *testing.T) {
 	loc, err := time.LoadLocation("Europe/Paris")
 	if err != nil {
 		t.Fatal(err)
@@ -45,11 +45,22 @@ func TestCatalogOnlyIncludesTodayAndTomorrow(t *testing.T) {
 	today := time.Date(2026, 10, 24, 0, 0, 0, 0, loc)
 	var events []event
 	for day := -7; day <= 60; day++ {
-		events = append(events, event{Start: today.AddDate(0, 0, day).Add(23 * time.Hour)})
+		for prayer := 0; prayer < 5; prayer++ {
+			events = append(events, event{Start: today.AddDate(0, 0, day).Add(time.Duration(6+prayer) * time.Hour)})
+		}
 	}
 	entry := newCatalogMosque("test", &mosque{Timezone: "Europe/Paris"}, events, today, today, today)
-	if len(entry.Events) != 2 || entry.Events[0].Date != "2026-10-24" || entry.Events[1].Date != "2026-10-25" {
-		t.Fatalf("want today/tomorrow only, got %+v", entry.Events)
+	if len(entry.Events) != 15 {
+		t.Fatalf("want 15 preview events across three local days, got %d", len(entry.Events))
+	}
+	counts := make(map[string]int)
+	for _, e := range entry.Events {
+		counts[e.Date]++
+	}
+	for _, date := range []string{"2026-10-24", "2026-10-25", "2026-10-26"} {
+		if counts[date] != 5 {
+			t.Errorf("want five events on %s, got %d", date, counts[date])
+		}
 	}
 }
 

@@ -5,8 +5,11 @@
 
 Claude requested changes on 2026-10-12. Codex's fixes and remaining acceptance conditions are in
 `reviews/piece-1-codex-response.md`; the implementation is on local branch `feat/calendar-onboarding`.
+Claude re-reviewed `5a63627`: code GO after R1. R1 now keeps three days of preview and separates
+missing-preview wording from subscription status; awaiting Claude's short final look.
 F2 remains undecided: merging/pushing to `main` publishes the site. Do not treat review completion
 as authorization to publish. The Google `cid` shortcut still needs signed-in desktop/Android acceptance.
+R2 also remains undecided: pushing this public branch exposes its tracked review/planning history.
 
 ## Current implementation piece
 

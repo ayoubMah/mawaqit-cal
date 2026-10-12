@@ -38,7 +38,8 @@ The catalog lists only mosques successfully generated in that invocation, not ol
 the output folder. Search matches mosque names and slugs, ignoring case and accents. Share a selection
 with `?mosque=<slug>&lang=fr` (or `en` / `ar`). Today's preview uses the mosque's timezone, not the
 viewer's timezone, and flags data checked more than 48 hours ago or a missing current day.
-Only today and tomorrow are included in the preview catalog; the ICS rolling window is unchanged.
+The preview catalog includes today and the next two local days, so it can outlive one missed daily
+build. A missing preview is described separately from the subscription; the ICS rolling window is unchanged.
 An unavailable or empty `?mosque=` shows a notice and requires an explicit choice; it never silently
 substitutes another mosque. Google's phone instructions cover both its app and Apple's Calendar
 app reading a Google account, including Google's calendar sync selection page.

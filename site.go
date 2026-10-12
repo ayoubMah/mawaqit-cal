@@ -35,13 +35,15 @@ func newCatalogMosque(slug string, m *mosque, events []event, fetchedAt, builtAt
 		ID: slug, Name: m.Label, Timezone: m.Timezone,
 		SourceURL: "https://mawaqit.net/fr/" + slug,
 		Feed:      slug + ".ics", SourceFetchedAt: fetchedAt, FeedBuiltAt: builtAt,
-		Events: make([]catalogEvent, 0, 10),
+		Events: make([]catalogEvent, 0, 15),
 	}
 	today := previewDay.Format(time.DateOnly)
-	tomorrow := previewDay.AddDate(0, 0, 1).Format(time.DateOnly)
+	// Keep the preview usable through one missed daily build. The subscription
+	// itself has a longer rolling window and is independent of this preview.
+	lastPreviewDay := previewDay.AddDate(0, 0, 2).Format(time.DateOnly)
 	for _, e := range events {
 		date := e.Start.Format(time.DateOnly)
-		if date != today && date != tomorrow {
+		if date < today || date > lastPreviewDay {
 			continue
 		}
 		entry.Events = append(entry.Events, catalogEvent{

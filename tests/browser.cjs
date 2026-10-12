@@ -128,6 +128,33 @@ const assert = require('node:assert/strict');
     assert.equal(await reload.locator('#mosque-name').textContent(), second.name);
     await reload.close();
 
+    // Reuse the last successful snapshot after a missed daily refresh. The
+    // second following local day still needs five prayers in the preview.
+    const previewDates = [...new Set(original.events.map(event => event.date))];
+    assert.equal(previewDates.length, 3);
+    const thirdDay = original.events.find(event => event.date === previewDates[2]);
+    const missed = await scenario({ version: 1, mosques: [original] });
+    await missed.clock.install({ time: new Date(thirdDay.start) });
+    await missed.goto('http://127.0.0.1:8766/?lang=en');
+    await missed.locator('#app').waitFor({ state: 'visible' });
+    assert.equal(await missed.locator('#prayer-list li').count(), 5);
+    assert.equal(await missed.locator('#no-times').isVisible(), false);
+    const subscription = await missed.locator('#feed-url').inputValue();
+    await missed.clock.setSystemTime(new Date(new Date(thirdDay.start).getTime() + 36 * 60 * 60 * 1000));
+    await missed.clock.fastForward(60_000);
+    assert.equal(await missed.locator('#no-times').isVisible(), true);
+    assert.equal(await missed.locator('#stale').isVisible(), true);
+    assert.equal(await missed.locator('#subscribe-panel').isVisible(), true);
+    assert.equal(await missed.locator('#feed-url').inputValue(), subscription);
+    for (const [lang, previewWord, subscriptionWord] of [
+      ['fr', 'aperçu', 'abonnement'], ['en', 'preview', 'subscription'], ['ar', 'معاينة', 'اشتراك'],
+    ]) {
+      await missed.locator('#language').selectOption(lang);
+      const notice = await missed.locator('#no-times').textContent();
+      assert.ok(notice.includes(previewWord) && notice.includes(subscriptionWord));
+    }
+    await missed.close();
+
     for (const [label, data, status] of [
       ['empty', { version: 1, mosques: [] }, 200],
       ['unavailable', {}, 503],
@@ -148,6 +175,6 @@ const assert = require('node:assert/strict');
       await p.close();
     }
     assert.deepEqual(errors, []);
-    console.log('PASS: desktop, 390/320px mobile, FR/EN/AR + RTL; Google syncselect and iPhone branch, Apple direct flow, Outlook work/school; unknown/empty mosque selection and explicit recovery; search, copy fallback, confirmation reset, keyboard focus, share URLs, production subpath/webcal, mosque-timezone day, escaped names, stale/missing/invalid/empty/error states; zero browser errors.');
+    console.log('PASS: three-day preview after missed build and preview-only expiry messages in FR/EN/AR; desktop, 390/320px mobile, FR/EN/AR + RTL; Google syncselect and iPhone branch, Apple direct flow, Outlook work/school; unknown/empty mosque selection and explicit recovery; search, copy fallback, confirmation reset, keyboard focus, share URLs, production subpath/webcal, mosque-timezone day, escaped names, stale/missing/invalid/empty/error states; zero browser errors.');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
