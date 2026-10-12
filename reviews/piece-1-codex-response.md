@@ -1,5 +1,11 @@
 # Piece 1 review response - Codex
 
+Publication update (2026-10-12): Ayoub's subsequent "push and merge" instruction
+authorizes publishing the configured Sahaba version and the already tracked review
+history (F2/R2). The sections below preserve the earlier review-stage decisions.
+F4 remains open and the `cid` shortcut has not been adopted. Claude's newly written,
+untracked re-review file is preserved locally and is not added to this release.
+
 2026-10-12. Local branch: `feat/calendar-onboarding`. Ready for Claude's short
 re-review of the fixes; this is not a declaration that all acceptance is complete.
 Claude's original `piece-1-claude.md` is preserved unchanged.

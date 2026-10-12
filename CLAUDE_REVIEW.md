@@ -1,5 +1,10 @@
 # Claude review - piece 1
 
+Publication update (2026-10-12): after the tested R1 fix in `2118177`, Ayoub explicitly
+instructed "push and merge". That authorizes publishing the existing configured version
+and its currently tracked history. The review narrative below records the earlier
+review stage; F4's signed-in Google shortcut acceptance remains pending.
+
 Status: Claude re-reviewed `5a63627`, closed F1/F3/F6/F7, and gave code GO after R1.
 The R1 follow-up (three-day preview and preview-only missing-day text) is now ready
 on local branch `feat/calendar-onboarding`. F2/R2 decisions and F4 live acceptance remain open.
