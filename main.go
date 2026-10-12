@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 	_ "time/tzdata" // Windows and slim CI images have no zoneinfo
@@ -38,58 +39,94 @@ func main() {
 	if *slugs == "" {
 		log.Fatal("-mosques is required (find a slug with: mawaqit-cal search <city>)")
 	}
+	ids, err := parseSlugs(*slugs)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if err := os.MkdirAll(*out, 0o755); err != nil {
 		log.Fatal(err)
 	}
 
 	failed := false
-	for _, slug := range strings.Split(*slugs, ",") {
-		slug = strings.TrimSpace(slug)
-		if slug == "" {
-			continue
-		}
-		if err := build(slug, *out, *past, *future); err != nil {
+	var catalog []catalogMosque
+	for _, slug := range ids {
+		entry, err := build(slug, *out, *past, *future)
+		if err != nil {
 			// A failed mosque must fail the run: publishing an empty feed would
 			// make Google delete every event from the subscriber's calendar.
 			log.Printf("%s: %v", slug, err)
 			failed = true
+		} else {
+			catalog = append(catalog, entry)
 		}
 	}
 	if failed {
 		os.Exit(1)
 	}
+	if len(catalog) == 0 {
+		log.Fatal("no mosque feeds generated")
+	}
+	if err := writeSite(*out, catalog); err != nil {
+		log.Fatal(err)
+	}
 }
 
-func build(slug, outDir string, past, future int) error {
+func build(slug, outDir string, past, future int) (catalogMosque, error) {
 	html, err := fetch("https://mawaqit.net/fr/" + slug)
 	if err != nil {
-		return err
+		return catalogMosque{}, err
 	}
+	fetchedAt := time.Now().UTC()
 	m, err := parseMosque(html)
 	if err != nil {
-		return err
+		return catalogMosque{}, err
 	}
 	loc, err := time.LoadLocation(m.Timezone)
 	if err != nil {
-		return fmt.Errorf("timezone %q: %w", m.Timezone, err)
+		return catalogMosque{}, fmt.Errorf("timezone %q: %w", m.Timezone, err)
 	}
 
 	today := time.Now().In(loc)
 	start := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, loc).AddDate(0, 0, -past)
 	events, err := m.events(slug, start, past+future+1, loc)
 	if err != nil {
-		return err
+		return catalogMosque{}, err
 	}
 	if len(events) == 0 {
-		return errors.New("no events generated")
+		return catalogMosque{}, errors.New("no events generated")
 	}
 
 	path := filepath.Join(outDir, slug+".ics")
 	if err := os.WriteFile(path, []byte(renderICS(m.Label, events)), 0o644); err != nil {
-		return err
+		return catalogMosque{}, err
 	}
 	log.Printf("%s: %d events -> %s", slug, len(events), path)
-	return nil
+	return newCatalogMosque(slug, m, events, fetchedAt, time.Now().UTC(), today), nil
+}
+
+var slugPattern = regexp.MustCompile(`^[a-z0-9-]+$`)
+
+// Validate the entire configuration before creating files or fetching pages.
+func parseSlugs(value string) ([]string, error) {
+	var ids []string
+	seen := make(map[string]bool)
+	for _, slug := range strings.Split(value, ",") {
+		slug = strings.TrimSpace(slug)
+		if slug == "" {
+			continue
+		}
+		if !slugPattern.MatchString(slug) {
+			return nil, fmt.Errorf("invalid mosque slug %q: use lowercase letters, digits and hyphens", slug)
+		}
+		if !seen[slug] {
+			ids = append(ids, slug)
+			seen[slug] = true
+		}
+	}
+	if len(ids) == 0 {
+		return nil, errors.New("no mosque slugs configured")
+	}
+	return ids, nil
 }
 
 func fetch(url string) (string, error) {

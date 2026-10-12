@@ -1,6 +1,20 @@
 # Roadmap
 
-> **Status: v0 works; everything below is planned, not started.**
+> **Status (2026-10-12): v0 live. Piece 1, guided static website for configured feeds,
+> implemented locally by Codex and awaiting Claude review. Expanded public coverage and API are not started.**
+
+Claude requested changes on 2026-10-12. Codex's fixes and remaining acceptance conditions are in
+`reviews/piece-1-codex-response.md`; the implementation is on local branch `feat/calendar-onboarding`.
+F2 remains undecided: merging/pushing to `main` publishes the site. Do not treat review completion
+as authorization to publish. The Google `cid` shortcut still needs signed-in desktop/Android acceptance.
+
+## Current implementation piece
+
+Ayoub authorized incremental implementation on 2026-10-12, with Claude reviewing each piece.
+Piece 1 adds a generated catalog and static onboarding site to the existing CLI/Pages architecture:
+mosque selection, today's preview, French/English/Arabic, calendar subscription instructions,
+and the phone visibility check. No additional mosque coverage or deployment in this piece.
+Review instructions and verification: `CLAUDE_REVIEW.md`. Next-version proposal: `NEXT_VERSION.md`.
 
 ## v0 (done)
 
