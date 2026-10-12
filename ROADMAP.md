@@ -1,6 +1,25 @@
 # Roadmap
 
-> **Status: v0 works; everything below is planned, not started.**
+> **Status (2026-10-12): Ayoub authorized pushing and merging piece 1 for publication.
+> The scope is the existing Sahaba feed and current tracked review/planning history.
+> Expanded mosque coverage and a public API are not started.**
+
+Claude requested changes on 2026-10-12. Codex's fixes and remaining acceptance conditions are in
+`reviews/piece-1-codex-response.md`; the implementation is on local branch `feat/calendar-onboarding`.
+Claude re-reviewed `5a63627`: code GO after R1. R1 now keeps three days of preview and separates
+missing-preview wording from subscription status. R1's regression and browser checks passed.
+Ayoub's subsequent "push and merge" instruction authorizes F2 publication and publishing the
+already tracked history in R2. Claude's new, untracked re-review report is preserved locally.
+The Google `cid` shortcut still needs signed-in desktop/Android acceptance and remains unchanged.
+This user authorization does not establish Mawaqit's agreement; broader coverage/API still follow Gate 0.
+
+## Current implementation piece
+
+Ayoub authorized incremental implementation on 2026-10-12, with Claude reviewing each piece.
+Piece 1 adds a generated catalog and static onboarding site to the existing CLI/Pages architecture:
+mosque selection, today's preview, French/English/Arabic, calendar subscription instructions,
+and the phone visibility check. Publication uses the existing daily Pages workflow and adds no mosque coverage.
+Review instructions and verification: `CLAUDE_REVIEW.md`. Next-version proposal: `NEXT_VERSION.md`.
 
 ## v0 (done)
 

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123e36">
+  <meta name="description" content="Retrouvez les horaires de votre mosquée dans Google Calendar, Apple Calendar ou Outlook.">
+  <title>Salat · Votre mosquée, votre agenda</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip">Aller au contenu</a>
+  <header class="masthead wrap">
+    <a class="brand" href="./" aria-label="Salat">
+      <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><path d="M24 23A12 12 0 0 1 10 5a12 12 0 1 0 14 18Z" fill="currentColor"/><path d="m23 4 1.4 3.6L28 9l-3.6 1.4L23 14l-1.4-3.6L18 9l3.6-1.4Z" fill="currentColor"/></svg>
+      <span>Salat<span class="brand-note"> / mawaqit-cal</span></span>
+    </a>
+    <div class="language-picker">
+      <label for="language" data-i18n="language">Langue</label>
+      <select id="language"><option value="fr">Français</option><option value="en">English</option><option value="ar">العربية</option></select>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+    <section class="hero" aria-labelledby="hero-title">
+      <p class="eyebrow" data-i18n="eyebrow">VOTRE MOSQUÉE, VOTRE AGENDA</p>
+      <h1 id="hero-title" data-i18n="hero">Vos prières.<br>Dans votre quotidien.</h1>
+      <p class="hero-copy" data-i18n="intro">Les horaires de votre mosquée, iqama comprise, dans l’agenda que vous utilisez déjà.</p>
+      <p class="hero-note" data-i18n="promise">Gratuit. Sans compte supplémentaire. Un abonnement qui suit les mises à jour.</p>
+      <ol class="journey" aria-label="Étapes" id="journey"><li><span>1</span><span data-i18n="step1">Votre mosquée</span></li><li><span>2</span><span data-i18n="step2">Votre agenda</span></li><li><span>3</span><span data-i18n="step3">Votre téléphone</span></li></ol>
+    </section>
+
+    <div id="load-status" class="notice" role="status" data-i18n="loading">Chargement des mosquées…</div>
+    <noscript><p class="notice">Activez JavaScript pour choisir votre mosquée et afficher les instructions. / Enable JavaScript to select a mosque and view setup instructions.</p></noscript>
+
+    <div id="app" hidden>
+      <p id="selection-notice" class="notice" role="alert" hidden data-i18n="unknownMosque">Cette mosquée n’est pas disponible. Choisissez une mosquée dans la liste ci-dessous.</p>
+      <section id="selection-grid" class="selection-grid" aria-labelledby="find-heading">
+        <div class="finder panel">
+          <p class="section-number" data-i18n="stepOne">ÉTAPE 01</p>
+          <h2 id="find-heading" data-i18n="find">Trouvez votre mosquée</h2>
+          <label for="search" data-i18n="searchLabel">Nom de la mosquée</label>
+          <input id="search" type="search" autocomplete="off" placeholder="Créteil, Sahaba…" aria-controls="mosque-list">
+          <p class="muted small" data-i18n="catalogNote">Seules les mosquées avec un calendrier disponible sont affichées.</p>
+          <div id="mosque-list" class="mosque-list"></div>
+          <p id="no-results" class="muted" hidden data-i18n="noResults">Aucune mosquée disponible pour cette recherche.</p>
+        </div>
+
+        <section id="preview-panel" class="preview panel" aria-labelledby="mosque-name">
+          <div class="preview-top"><span class="eyebrow" data-i18n="preview">APERÇU DES HORAIRES</span><span class="today-pill" data-i18n="today">Aujourd’hui</span></div>
+          <h2 id="mosque-name"></h2>
+          <p id="preview-date" class="muted"></p>
+          <ul id="prayer-list" class="prayer-list"></ul>
+          <p id="no-times" class="notice" hidden data-i18n="noTimes">L’aperçu n’est pas disponible pour aujourd’hui. Cela ne modifie pas votre abonnement au calendrier. Consultez la mosquée pour les horaires du jour.</p>
+          <p id="stale" class="notice" hidden data-i18n="stale">La dernière vérification remonte à plus de 48 h. Confirmez les horaires auprès de la mosquée.</p>
+          <div class="source-info"><a id="source-link" target="_blank" rel="noopener noreferrer" data-i18n="source">Voir la mosquée sur Mawaqit ↗</a><p id="updated" class="small muted"></p><p id="timezone" class="small muted"></p></div>
+        </section>
+      </section>
+
+      <section id="subscribe-panel" class="subscribe panel" aria-labelledby="subscribe-heading">
+        <p class="section-number" data-i18n="stepTwo">ÉTAPE 02</p>
+        <h2 id="subscribe-heading" data-i18n="choose">Choisissez votre agenda</h2>
+        <p class="muted" data-i18n="subscribeIntro">Abonnez-vous au lien du calendrier pour recevoir ses mises à jour.</p>
+        <div class="providers" role="group" id="provider-group" aria-label="Application calendrier">
+          <button type="button" data-provider="google" aria-pressed="true">Google Calendar</button>
+          <button type="button" data-provider="apple" aria-pressed="false">Apple Calendar</button>
+          <button type="button" data-provider="outlook" aria-pressed="false">Outlook</button>
+        </div>
+        <div class="setup-grid">
+          <div><h3 id="setup-heading"></h3><ol id="setup-steps" class="instructions"></ol><a id="open-calendar" class="button primary" target="_blank" rel="noopener noreferrer"></a><p><a id="work-outlook" href="https://outlook.office.com/calendar/" target="_blank" rel="noopener noreferrer" hidden data-i18n="workOutlook">Outlook : compte professionnel ou scolaire ↗</a></p><p id="local-warning" class="small muted" hidden data-i18n="localWarning">Aperçu local : pour vous abonner, utilisez le lien du site publié. Ce lien local ne sera pas accessible à votre agenda.</p></div>
+          <div class="feed-box"><label for="feed-url" data-i18n="feedLabel">Lien d’abonnement</label><input id="feed-url" type="url" readonly dir="ltr"><button id="copy" class="button secondary" type="button" data-i18n="copy">Copier le lien</button><p id="copy-status" role="status" class="small"></p><p class="small muted" data-i18n="importNote">Un abonnement se met à jour. Un fichier téléchargé puis importé reste une copie fixe.</p></div>
+        </div>
+      </section>
+
+      <section id="phone-panel" class="phone panel" aria-labelledby="phone-heading">
+        <div class="phone-icon" aria-hidden="true"><svg viewBox="0 0 32 42" width="32" height="42"><rect x="5" y="2" width="22" height="38" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m11 20 4 4 7-9M13 6h6M14 35h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><p class="section-number" data-i18n="stepThree">ÉTAPE 03 · NE L’OUBLIEZ PAS</p><h2 id="phone-heading" data-i18n="phone">Vérifiez sur votre téléphone</h2><p class="muted" data-i18n="phoneIntro">Être connecté au même compte ne suffit pas toujours : activez aussi ce calendrier sur votre téléphone.</p><ol id="phone-steps" class="instructions"></ol><div id="phone-links" class="help-links"></div><label class="check"><input type="checkbox" id="confirmed"><span data-i18n="confirm">Je vois les prières sur mon téléphone.</span></label><p id="confirmed-message" role="status" class="small"></p></div>
+      </section>
+
+      <p id="subscription-limits" class="footnote" data-i18n="limits">Votre agenda décide quand actualiser l’abonnement. Les changements peuvent prendre du temps. Pour l’adhan et les notifications, gardez votre application de prière.</p>
+    </div>
+  </main>
+  <footer class="wrap footer"><span data-i18n="footer">Les horaires de votre mosquée. Une place dans votre journée.</span><a href="https://github.com/ayoubMah/mawaqit-cal" target="_blank" rel="noopener noreferrer" data-i18n="code">Code source ↗</a></footer>
+</body>
+</html>
